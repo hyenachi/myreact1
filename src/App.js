@@ -1,13 +1,20 @@
-import logo from './logo.svg';
+import React from 'react';
+import Customer from './components/Customer'
 import './App.css';
 
-function App() {
+/*function App() {
   return (
-    <div className="gray-background">
-      <img src={logo} />
-      <h2> hhhhhh </h2>
-    </div>
+    <Customer/>
+
   );
+}*/
+
+class App extends React.Component {
+  render() {
+    return (
+      <Customer/>
+    )
+  }
 }
 
 export default App;
