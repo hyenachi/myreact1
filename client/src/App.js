@@ -8,43 +8,43 @@ import { TableBody } from '@mui/material';
 import { TableRow } from '@mui/material';
 import { TableCell } from '@mui/material';
 import { TableContainer } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 /*function App() {
   return (
     <Customer/>
 
   );
+
+    1. constructor()
+    2. componentWillMount()
+    3. render()
+    4. componentDidMount()
+
+    props or state => shouldComponentUpdate()
+
 }*/
 
-const customers = [
- {
-  'id':1,
-  'image':'https://placeimg.com/64/64/1',
-  'name':'박미안',
-  'birthday':'770210',
-  'gender':'male',
-  'job':'대학생'
- },
- {
-  'id':2,
-  'image':'https://placeimg.com/64/64/2',
-  'name':'박미1',
-  'birthday':'770210',
-  'gender':'male',
-  'job':'대학생'
- },
- {
-  'id':3,
-  'image':'https://placeimg.com/64/64/3',
-  'name':'박미2',
-  'birthday':'770210',
-  'gender':'male',
-  'job':'대학생'
- }
-]
-
-
 class App extends React.Component {
+
+  state = {
+    customers : ""
+  }
+  
+  componentDidMount() {
+    this.callApi()
+    .then (res => this.setState({customers : res}))
+    .catch(err => console.log(err));
+
+  }
+
+  callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  }
+
+
   render() {
 
     return (
@@ -59,19 +59,17 @@ class App extends React.Component {
             <TableCell>직업</TableCell>
           </TableHead>
           <TableBody>
-          { customers.map(x=> {
+          { this.state.customers ? this.state.customers.map(x=> {
             return (
-              <Customer 
-                key={x.id}
-                id={x.id} 
-                image={x.image}
-                name={x.name}
-                birthday={x.birthday}
-                gender={x.gender}
-                job={x.job}
-              />
+              <Customer key={x.id} id={x.id} image={x.image} name={x.name} birthday={x.birthday} gender={x.gender} job={x.job} />
             );
-          }) }
+          })  : 
+            <TableRow> 
+              <TableCell colSpan="6" align='center'>
+                <CircularProgress />
+              </TableCell>
+            </TableRow>
+              }
           </TableBody>
         </Table>
       </TableContainer>
