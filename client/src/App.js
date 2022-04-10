@@ -1,5 +1,6 @@
 import React from 'react';
 import Customer from './components/Customer'
+import CustomerAdd from './components/CustomerAdd';
 import './App.css';
 import { Paper } from '@mui/material';
 import { Table } from '@mui/material';
@@ -9,6 +10,8 @@ import { TableRow } from '@mui/material';
 import { TableCell } from '@mui/material';
 import { TableContainer } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+
+
 
 /*function App() {
   return (
@@ -27,8 +30,21 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 class App extends React.Component {
 
-  state = {
-    customers : ""
+  constructor(props) {
+    super(props);
+    this.state = {
+      customers : ''
+    }
+  }
+
+  stateRefresh = () => {
+    this.setState({
+      customers:''
+    });
+    this.callApi()
+    .then (res => this.setState({customers : res}))
+    .catch(err => console.log(err));
+
   }
   
   componentDidMount() {
@@ -46,36 +62,44 @@ class App extends React.Component {
 
 
   render() {
-
+    
     return (
-      <TableContainer>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead>
-            <TableCell>번호</TableCell>
-            <TableCell>이미지</TableCell>
-            <TableCell>이름</TableCell>
-            <TableCell>생일</TableCell>
-            <TableCell>성별</TableCell>
-            <TableCell>직업</TableCell>
-          </TableHead>
-          <TableBody>
-          { this.state.customers ? this.state.customers.map(x=> {
-            return (
-              <Customer key={x.id} id={x.id} image={x.image} name={x.name} birthday={x.birthday} gender={x.gender} job={x.job} />
-            );
-          })  : 
-            <TableRow> 
-              <TableCell colSpan="6" align='center'>
-                <CircularProgress />
-              </TableCell>
-            </TableRow>
-              }
-          </TableBody>
-        </Table>
-      </TableContainer>
+
+      <div>
+        <TableContainer>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+              <TableCell>번호</TableCell>
+              <TableCell>이미지</TableCell>
+              <TableCell>이름</TableCell>
+              <TableCell>생일</TableCell>
+              <TableCell>성별</TableCell>
+              <TableCell>직업</TableCell>
+              <TableCell>설정</TableCell>
+            </TableHead>
+            <TableBody>
+            { this.state.customers ? this.state.customers.map(x=> {
+              return (
+                <Customer stateRefresh={this.stateRefresh} key={x.id} id={x.id} image={x.image} name={x.name} birthday={x.birthday} gender={x.gender} job={x.job} />
+              );
+            })  : 
+              <TableRow> 
+                <TableCell colSpan="6" align='center'>
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
+                }
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <CustomerAdd stateRefresh={this.stateRefresh}/>
+
+      </div>
+
       
     )
   }
 }
 
-export default  App ;
+export default App;  ;
