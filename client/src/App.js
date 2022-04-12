@@ -109,12 +109,14 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      searchKeyword: '',
       customers : ''
     }
   }
 
   stateRefresh = () => {
     this.setState({
+      searchKeyword: '',
       customers:''
     });
     this.callApi()
@@ -136,9 +138,26 @@ class App extends React.Component {
     return body;
   }
 
+  handleValueChange = (e)=> {
+    let nextState = {};
+    nextState[e.target.name] = e.target.value;
+    this.setState(nextState);
+  }
+
+
 
   render() {
-    
+
+    const filteredComponents = (data) => {
+      data = data.filter((c)=>{
+        return c.name.indexOf(this.state.searchKeyword) > -1;
+      });
+      console.log(data);
+      return data.map((c)=>{
+        return <Customer stateRefresh={c.stateRefresh} key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job}></Customer>
+      });
+    }
+
     const cellList = ['번호', '이미지', '이름', '생일', '성별', '직업', '설정'];
     return (
       <div>
@@ -161,8 +180,11 @@ class App extends React.Component {
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="검색하기…"
               inputProps={{ 'aria-label': 'search' }}
+              name="searchKeyword"
+              value={this.state.searchKeyword}
+              onChange={this.handleValueChange}
             />
           </Search>
         </Toolbar>
@@ -170,21 +192,18 @@ class App extends React.Component {
         <Mymenu>
           <CustomerAdd stateRefresh={this.stateRefresh}/> 
         </Mymenu>
-        <TableContainer>
+        <Paper>
           <Table sx={{ minWidth: 1080 }}>
             <TableHead>
               {cellList.map(x=>{
                 return (
-                  <TableCell>{x}</TableCell>
+                  <TableCell key={x}>{x}</TableCell>
                 )
               })}
             </TableHead>
             <TableBody>
-            { this.state.customers ? this.state.customers.map(x=> {
-              return (
-                <Customer stateRefresh={this.stateRefresh} key={x.id} id={x.id} image={x.image} name={x.name} birthday={x.birthday} gender={x.gender} job={x.job} />
-              );
-            })  : 
+            { this.state.customers ? 
+                filteredComponents(this.state.customers)  : 
               <TableRow> 
                 <TableCell colSpan="6" align='center'>
                   <CircularProgress />
@@ -193,7 +212,7 @@ class App extends React.Component {
                 }
             </TableBody>
           </Table>
-        </TableContainer>
+        </Paper>
 
       </div>
 
